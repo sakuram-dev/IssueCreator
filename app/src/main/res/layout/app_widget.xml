@@ -1,38 +1,37 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     style="@style/Widget.IssueCreator.AppWidget.Container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:theme="@style/Theme.IssueCreator.AppWidgetContainer">
 
     <TextView
-        android:id="@+id/appwidget_text"
+        android:id="@+id/appwidget_user"
         style="@style/Widget.IssueCreator.AppWidget.InnerView"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
-        android:layout_centerVertical="true"
+        android:layout_weight="1"
         android:contentDescription="@string/appwidget_text"
-        android:text="@string/appwidget_text"
+        android:text="@string/app_widget_user"
         android:textSize="24sp"
         android:textStyle="bold|italic" />
 
     <TextView
-        android:id="@+id/appwidget_text_2"
+        android:id="@+id/appwidget_repo"
         style="@style/Widget.IssueCreator.AppWidget.InnerView"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
-        android:layout_toRightOf="@id/appwidget_text"
-        android:layout_centerVertical="true"
+        android:layout_weight="1"
         android:contentDescription="@string/appwidget_text"
-        android:text="@string/appwidget_text"
+        android:text="@string/app_widget_repo"
         android:textSize="24sp"
         android:textStyle="bold|italic" />
 
     <Button
         android:id="@+id/appwidget_button"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/appwidget_text_2"
-        android:layout_centerVertical="true" />
-</RelativeLayout>
+        android:layout_margin="8dp"
+        android:layout_weight="1" />
+</LinearLayout>
