@@ -13,6 +13,8 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
+import java.util.Objects;
+
 /**
  * Implementation of App Widget functionality.
  */
@@ -72,7 +74,7 @@ public class AppWidget extends AppWidgetProvider {
     @Override
     public void onReceive(Context context, Intent intent) {
         super.onReceive(context, intent);
-        if (intent.getAction().equals(ACTION_BUTTON)) {
+        if (Objects.equals(intent.getAction(), ACTION_BUTTON)) {
             showNotification(context, "Widget tapped");
             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/sakuram-dev/IssueCreator/issues/new"));
             PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, browserIntent, PendingIntent.FLAG_IMMUTABLE);
@@ -81,7 +83,7 @@ public class AppWidget extends AppWidgetProvider {
             } catch (PendingIntent.CanceledException e) {
                 e.printStackTrace();
             }
-        } else if (intent.getAction().equals(ACTION_USER)) {
+        } else if (Objects.equals(intent.getAction(), ACTION_USER)) {
             showNotification(context, "User tapped");
             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/sakuram-dev"));
             PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, browserIntent, PendingIntent.FLAG_IMMUTABLE);
@@ -90,7 +92,7 @@ public class AppWidget extends AppWidgetProvider {
             } catch (PendingIntent.CanceledException e) {
                 e.printStackTrace();
             }
-        } else if (intent.getAction().equals(ACTION_REPO)) {
+        } else if (Objects.equals(intent.getAction(), ACTION_REPO)) {
             showNotification(context, "Repo tapped");
             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/sakuram-dev/IssueCreator"));
             PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, browserIntent, PendingIntent.FLAG_IMMUTABLE);
