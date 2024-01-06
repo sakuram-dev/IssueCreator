@@ -28,8 +28,6 @@ public class AppWidget extends AppWidgetProvider {
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                 int appWidgetId) {
 
-        CharSequence widgetText = context.getString(R.string.app_widget_user);
-
         Intent intent_button = new Intent(context, AppWidget.class);
         intent_button.setAction(ACTION_BUTTON);
         PendingIntent pendingIntent_button = PendingIntent.getBroadcast(context, 0, intent_button, PendingIntent.FLAG_IMMUTABLE);
@@ -75,7 +73,6 @@ public class AppWidget extends AppWidgetProvider {
     public void onReceive(Context context, Intent intent) {
         super.onReceive(context, intent);
         if (Objects.equals(intent.getAction(), ACTION_BUTTON)) {
-            showNotification(context, "Widget tapped");
             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/sakuram-dev/IssueCreator/issues/new"));
             PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, browserIntent, PendingIntent.FLAG_IMMUTABLE);
             try {
