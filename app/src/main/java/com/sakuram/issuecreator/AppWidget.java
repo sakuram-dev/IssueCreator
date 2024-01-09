@@ -46,6 +46,10 @@ public class AppWidget extends AppWidgetProvider {
         views.setOnClickPendingIntent(R.id.appwidget_user, pendingIntent_user);
         views.setOnClickPendingIntent(R.id.appwidget_repo, pendingIntent_repo);
 
+        // setTextViewText
+        views.setTextViewText(R.id.appwidget_user, context.getSharedPreferences("user", Context.MODE_PRIVATE).getString("user", "user"));
+        views.setTextViewText(R.id.appwidget_repo, context.getSharedPreferences("repo", Context.MODE_PRIVATE).getString("repo", "repo"));
+
         // Instruct the widget manager to update the widget
         appWidgetManager.updateAppWidget(appWidgetId, views);
     }

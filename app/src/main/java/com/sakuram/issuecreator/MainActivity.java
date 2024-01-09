@@ -4,6 +4,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -47,8 +50,22 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             // read user input
-            String user = Objects.requireNonNull(((TextInputLayout) findViewById(R.id.user_name)).getEditText()).getText().toString();
-            Toast.makeText(MainActivity.this, user, Toast.LENGTH_SHORT).show();
+            String user_name = Objects.requireNonNull(((TextInputLayout) findViewById(R.id.user_name)).getEditText()).getText().toString();
+            String repo_name = Objects.requireNonNull(((TextInputLayout) findViewById(R.id.repo_name)).getEditText()).getText().toString();
+
+            // show Toast
+            Toast.makeText(MainActivity.this, user_name, Toast.LENGTH_SHORT).show();
+
+            // save user input to shared preferences
+            getSharedPreferences("user", MODE_PRIVATE).edit().putString("user", user_name).apply();
+            getSharedPreferences("repo", MODE_PRIVATE).edit().putString("repo", repo_name).apply();
+
+            // update widget
+            Intent intent = new Intent(MainActivity.this, AppWidget.class);
+            intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+            int[] ids = AppWidgetManager.getInstance(getApplication()).getAppWidgetIds(new ComponentName(getApplication(), AppWidget.class));
+            intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
+            sendBroadcast(intent);
         }
     };
 }
