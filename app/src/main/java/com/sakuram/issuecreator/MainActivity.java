@@ -10,6 +10,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.google.android.material.textfield.TextInputLayout;
+
+import java.util.Objects;
+
 public class MainActivity extends AppCompatActivity {
 
     private static final String CHANNEL_ID = "com.sakuram.issuecreator.NOTIFICATION_CHANNEL";
@@ -42,7 +46,9 @@ public class MainActivity extends AppCompatActivity {
     private final View.OnClickListener onCLickButton = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Toast.makeText(MainActivity.this, "button tapped", Toast.LENGTH_SHORT).show();
+            // read user input
+            String user = Objects.requireNonNull(((TextInputLayout) findViewById(R.id.user_name)).getEditText()).getText().toString();
+            Toast.makeText(MainActivity.this, user, Toast.LENGTH_SHORT).show();
         }
     };
 }
