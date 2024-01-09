@@ -6,6 +6,9 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -27,5 +30,19 @@ public class MainActivity extends AppCompatActivity {
         }
 
         setContentView(R.layout.activity_main);
+        setViews();
     }
+
+    // set views
+    private void setViews() {
+        Button button = findViewById(R.id.button);
+        button.setOnClickListener(onCLickButton);
+    }
+
+    private final View.OnClickListener onCLickButton = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Toast.makeText(MainActivity.this, "button tapped", Toast.LENGTH_SHORT).show();
+        }
+    };
 }
