@@ -85,7 +85,6 @@ public class AppWidget extends AppWidgetProvider {
                 e.printStackTrace();
             }
         } else if (Objects.equals(intent.getAction(), ACTION_USER)) {
-            showNotification(context, "User tapped");
             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/sakuram-dev"));
             PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, browserIntent, PendingIntent.FLAG_IMMUTABLE);
             try {
@@ -94,7 +93,6 @@ public class AppWidget extends AppWidgetProvider {
                 e.printStackTrace();
             }
         } else if (Objects.equals(intent.getAction(), ACTION_REPO)) {
-            showNotification(context, "Repo tapped");
             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/sakuram-dev/IssueCreator"));
             PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, browserIntent, PendingIntent.FLAG_IMMUTABLE);
             try {
