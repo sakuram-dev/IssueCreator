@@ -40,8 +40,7 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
-        usernameInputLayout = findViewById(R.id.user_name);
-        repoInputLayout = findViewById(R.id.repo_name);
+        InitializeViews();
 
         setViews();
     }
@@ -57,6 +56,13 @@ public class MainActivity extends AppCompatActivity {
             NotificationManager notificationManager = getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(channel);
         }
+    }
+
+    private void InitializeViews() {
+        usernameInputLayout = findViewById(R.id.user_name);
+        repoInputLayout = findViewById(R.id.repo_name);
+        submitButton = findViewById(R.id.button);
+        submitButton.setOnClickListener(onCLickButton);
     }
 
     // set views
