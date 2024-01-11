@@ -110,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void saveToPreferences(String key, String value) {
-        getSharedPreferences(key, MODE_PRIVATE).edit().putString(key, value).apply();
+        getSharedPreferences("IssueCreator", MODE_PRIVATE).edit().putString(key, value).apply();
     }
 
     private void updateWidget() {
