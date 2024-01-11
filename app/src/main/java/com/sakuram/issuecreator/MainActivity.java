@@ -70,17 +70,10 @@ public class MainActivity extends AppCompatActivity {
             String user_name = getTextInput(R.id.user_name);
             String repo_name = getTextInput(R.id.repo_name);
 
-            checkUsernameExists(user_name);
+            checkUsernameExists(user_name, repo_name);
 
             // show Toast
             showToast("User: " + user_name + "\nRepo: " + repo_name);
-
-            // save user input to shared preferences
-            saveToPreferences("user", user_name);
-            saveToPreferences("repo", repo_name);
-
-            // Update widget
-            updateWidget();
         }
     };
 
@@ -108,11 +101,11 @@ public class MainActivity extends AppCompatActivity {
     private final Handler handler = new Handler(Looper.getMainLooper());
 
     // check if GitHub user is exist or not
-    private void checkUsernameExists(String username) {
+    private void checkUsernameExists(String user_name, String repo_name) {
         executor.execute(() -> {
             OkHttpClient client = new OkHttpClient();
             Request request = new Request.Builder()
-                    .url("https://api.github.com/users/" + username)
+                    .url("https://api.github.com/users/" + user_name)
                     .build();
 
             try {
@@ -123,6 +116,13 @@ public class MainActivity extends AppCompatActivity {
                         usernameInputLayout.setError("User does not exist. Please try again.");
                     } else {
                         usernameInputLayout.setError(null);
+
+                        // Save user input to shared preferences
+                        saveToPreferences("user", user_name);
+                        saveToPreferences("repo", repo_name);
+
+                        // Update widget
+                        updateWidget();
                     }
                 });
             } catch (IOException e) {
