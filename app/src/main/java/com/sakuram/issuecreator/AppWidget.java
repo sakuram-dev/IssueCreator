@@ -46,8 +46,8 @@ public class AppWidget extends AppWidgetProvider {
         views.setOnClickPendingIntent(R.id.appwidget_button, getPendingIntent(context, ACTION_BUTTON));
 
         // setTextViewText
-        views.setTextViewText(R.id.appwidget_user, userName);
-        views.setTextViewText(R.id.appwidget_repo, repoName);
+        views.setTextViewText(R.id.appwidget_user, userName.isEmpty() ? "Set user" : userName);
+        views.setTextViewText(R.id.appwidget_repo, repoName.isEmpty() ? "Set repo" : repoName);
 
         // Instruct the widget manager to update the widget
         appWidgetManager.updateAppWidget(appWidgetId, views);
