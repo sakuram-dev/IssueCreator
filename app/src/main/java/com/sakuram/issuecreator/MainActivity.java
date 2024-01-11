@@ -65,12 +65,6 @@ public class MainActivity extends AppCompatActivity {
         submitButton.setOnClickListener(onCLickButton);
     }
 
-    // set views
-    private void setViews() {
-        Button button = findViewById(R.id.button);
-        button.setOnClickListener(onCLickButton);
-    }
-
     private final View.OnClickListener onCLickButton = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
