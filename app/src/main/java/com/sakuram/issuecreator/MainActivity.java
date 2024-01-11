@@ -38,7 +38,16 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Notification
+        setContentView(R.layout.activity_main);
+
+        usernameInputLayout = findViewById(R.id.user_name);
+        repoInputLayout = findViewById(R.id.repo_name);
+
+        setViews();
+    }
+
+    // for notification
+    private void createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             CharSequence name = "channel name";
             String description = "channel_description";
@@ -48,13 +57,6 @@ public class MainActivity extends AppCompatActivity {
             NotificationManager notificationManager = getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(channel);
         }
-
-        setContentView(R.layout.activity_main);
-
-        usernameInputLayout = findViewById(R.id.user_name);
-        repoInputLayout = findViewById(R.id.repo_name);
-
-        setViews();
     }
 
     // set views
