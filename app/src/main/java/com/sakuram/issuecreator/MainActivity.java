@@ -70,12 +70,36 @@ public class MainActivity extends AppCompatActivity {
             String user_name = getTextInput(R.id.user_name);
             String repo_name = getTextInput(R.id.repo_name);
 
+            // validate user input
+            if (!validateInput(user_name, repo_name)) {
+                return;
+            }
+
             checkUsernameExists(user_name, repo_name);
 
             // show Toast
             showToast("User: " + user_name + "\nRepo: " + repo_name);
         }
     };
+
+    // validate user input
+    private boolean validateInput(String user_name, String repo_name) {
+        if (user_name.isEmpty()) {
+            usernameInputLayout.setError("Username cannot be empty");
+            return false;
+        } else {
+            usernameInputLayout.setError(null);
+        }
+
+        if (repo_name.isEmpty()) {
+            repoInputLayout.setError("Repository name cannot be empty");
+            return false;
+        } else {
+            repoInputLayout.setError(null);
+        }
+
+        return true;
+    }
 
     private String getTextInput(int id) {
         return Objects.requireNonNull(((TextInputLayout) findViewById(id)).getEditText()).getText().toString();
