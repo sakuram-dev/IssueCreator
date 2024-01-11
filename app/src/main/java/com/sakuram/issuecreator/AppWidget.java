@@ -5,6 +5,7 @@ import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.widget.RemoteViews;
@@ -20,38 +21,43 @@ import java.util.Objects;
  */
 public class AppWidget extends AppWidgetProvider {
 
+    // Define the action for tapping the widget
     public static final String ACTION_BUTTON = "com.sakuram.issuecreator.ACTION_WIDGET_BUTTON_TAPPED";
     public static final String ACTION_USER = "com.sakuram.issuecreator.ACTION_WIDGET_USER_TAPPED";
     public static final String ACTION_REPO = "com.sakuram.issuecreator.ACTION_WIDGET_REPO_TAPPED";
+
     private static final String CHANNEL_ID = "com.sakuram.issuecreator.NOTIFICATION_CHANNEL";
+
+    private static String GITHUB_URL = "https://github.com/";
 
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                 int appWidgetId) {
 
-        Intent intent_button = new Intent(context, AppWidget.class);
-        intent_button.setAction(ACTION_BUTTON);
-        PendingIntent pendingIntent_button = PendingIntent.getBroadcast(context, 0, intent_button, PendingIntent.FLAG_IMMUTABLE);
-
-        Intent intent_user = new Intent(context, AppWidget.class);
-        intent_user.setAction(ACTION_USER);
-        PendingIntent pendingIntent_user = PendingIntent.getBroadcast(context, 0, intent_user, PendingIntent.FLAG_IMMUTABLE);
-
-        Intent intent_repo = new Intent(context, AppWidget.class);
-        intent_repo.setAction(ACTION_REPO);
-        PendingIntent pendingIntent_repo = PendingIntent.getBroadcast(context, 0, intent_repo, PendingIntent.FLAG_IMMUTABLE);
+        // read shared preferences
+        SharedPreferences pref = context.getSharedPreferences("IssueCreator", Context.MODE_PRIVATE);
+        String userName = pref.getString("user", "");
+        String repoName = pref.getString("repo", "");
 
         // Construct the RemoteViews object
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.app_widget);
-        views.setOnClickPendingIntent(R.id.appwidget_button, pendingIntent_button);
-        views.setOnClickPendingIntent(R.id.appwidget_user, pendingIntent_user);
-        views.setOnClickPendingIntent(R.id.appwidget_repo, pendingIntent_repo);
+        // Set onClickPendingIntent for each actions
+        views.setOnClickPendingIntent(R.id.appwidget_user,getPendingIntent(context, ACTION_USER));
+        views.setOnClickPendingIntent(R.id.appwidget_repo, getPendingIntent(context, ACTION_REPO));
+        views.setOnClickPendingIntent(R.id.appwidget_button, getPendingIntent(context, ACTION_BUTTON));
 
         // setTextViewText
-        views.setTextViewText(R.id.appwidget_user, context.getSharedPreferences("user", Context.MODE_PRIVATE).getString("user", "user"));
-        views.setTextViewText(R.id.appwidget_repo, context.getSharedPreferences("repo", Context.MODE_PRIVATE).getString("repo", "repo"));
+        views.setTextViewText(R.id.appwidget_user, userName.isEmpty() ? "Set user" : userName);
+        views.setTextViewText(R.id.appwidget_repo, repoName.isEmpty() ? "Set repo" : repoName);
 
         // Instruct the widget manager to update the widget
         appWidgetManager.updateAppWidget(appWidgetId, views);
+    }
+
+    // Helper method to get PendingIntent
+    private static PendingIntent getPendingIntent(Context context, String action) {
+        Intent intent = new Intent(context, AppWidget.class);
+        intent.setAction(action);
+        return PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
     }
 
     @Override
@@ -76,31 +82,37 @@ public class AppWidget extends AppWidgetProvider {
     @Override
     public void onReceive(Context context, Intent intent) {
         super.onReceive(context, intent);
-        if (Objects.equals(intent.getAction(), ACTION_BUTTON)) {
-            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/sakuram-dev/IssueCreator/issues/new"));
-            PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, browserIntent, PendingIntent.FLAG_IMMUTABLE);
-            try {
-                pendingIntent.send();
-            } catch (PendingIntent.CanceledException e) {
-                e.printStackTrace();
-            }
-        } else if (Objects.equals(intent.getAction(), ACTION_USER)) {
-            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/sakuram-dev"));
-            PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, browserIntent, PendingIntent.FLAG_IMMUTABLE);
-            try {
-                pendingIntent.send();
-            } catch (PendingIntent.CanceledException e) {
-                e.printStackTrace();
-            }
-        } else if (Objects.equals(intent.getAction(), ACTION_REPO)) {
-            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/sakuram-dev/IssueCreator"));
-            PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, browserIntent, PendingIntent.FLAG_IMMUTABLE);
-            try {
-                pendingIntent.send();
-            } catch (PendingIntent.CanceledException e) {
-                e.printStackTrace();
+
+        // read shared preferences
+        SharedPreferences prefs = context.getSharedPreferences("IssueCreator", Context.MODE_PRIVATE);
+        String userName = prefs.getString("user", "");
+        String repoName = prefs.getString("repo", "");
+
+        // open MainActivity if userName or repoName is empty
+        if (userName.isEmpty() || repoName.isEmpty()) {
+            openMainActivity(context);
+        } else {
+            // Handle each action
+            if (Objects.equals(intent.getAction(), ACTION_USER)) {
+                openBrowser(context, GITHUB_URL + userName);
+            } else if (Objects.equals(intent.getAction(), ACTION_REPO)) {
+                openBrowser(context, GITHUB_URL + userName + "/" + repoName);
+            } else if (Objects.equals(intent.getAction(), ACTION_BUTTON)) {
+                openBrowser(context, GITHUB_URL + userName + "/" + repoName + "/issues/new");
             }
         }
+    }
+
+    private void openMainActivity(Context context) {
+        Intent mainActivityIntent = new Intent(context, MainActivity.class);
+        mainActivityIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(mainActivityIntent);
+    }
+
+    private void openBrowser(Context context, String url) {
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+        browserIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(browserIntent);
     }
 
     // show notification
