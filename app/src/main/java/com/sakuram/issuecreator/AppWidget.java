@@ -90,9 +90,7 @@ public class AppWidget extends AppWidgetProvider {
 
         // open MainActivity if userName or repoName is empty
         if (userName.isEmpty() || repoName.isEmpty()) {
-            Intent mainActivityIntent = new Intent(context, MainActivity.class);
-            mainActivityIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            context.startActivity(mainActivityIntent);
+            openMainActivity(context);
         } else if (Objects.equals(intent.getAction(), ACTION_BUTTON)) {
             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(GITHUB_URL + userName + "/" + repoName + "/issues/new"));
             PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, browserIntent, PendingIntent.FLAG_IMMUTABLE);
@@ -118,6 +116,12 @@ public class AppWidget extends AppWidgetProvider {
                 e.printStackTrace();
             }
         }
+    }
+
+    private void openMainActivity(Context context) {
+        Intent mainActivityIntent = new Intent(context, MainActivity.class);
+        mainActivityIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(mainActivityIntent);
     }
 
     // show notification
