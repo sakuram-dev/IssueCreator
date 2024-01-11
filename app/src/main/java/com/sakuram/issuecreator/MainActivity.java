@@ -67,8 +67,8 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             // read user input
-            String user_name = getTextInput(R.id.user_name);
-            String repo_name = getTextInput(R.id.repo_name);
+            String user_name = getTextInput(usernameInputLayout);
+            String repo_name = getTextInput(repoInputLayout);
 
             // validate user input
             if (!validateInput(user_name, repo_name)) {
@@ -101,8 +101,8 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    private String getTextInput(int id) {
-        return Objects.requireNonNull(((TextInputLayout) findViewById(id)).getEditText()).getText().toString();
+    private String getTextInput(TextInputLayout inputLayout) {
+        return Objects.requireNonNull(inputLayout.getEditText()).getText().toString();
     }
 
     private void showToast(String message) {
