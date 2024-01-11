@@ -5,6 +5,7 @@ import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.widget.RemoteViews;
@@ -20,18 +21,23 @@ import java.util.Objects;
  */
 public class AppWidget extends AppWidgetProvider {
 
+    // Define the action for tapping the widget
     public static final String ACTION_BUTTON = "com.sakuram.issuecreator.ACTION_WIDGET_BUTTON_TAPPED";
     public static final String ACTION_USER = "com.sakuram.issuecreator.ACTION_WIDGET_USER_TAPPED";
     public static final String ACTION_REPO = "com.sakuram.issuecreator.ACTION_WIDGET_REPO_TAPPED";
+
     private static final String CHANNEL_ID = "com.sakuram.issuecreator.NOTIFICATION_CHANNEL";
 
     private static String GITHUB_URL = "https://github.com/";
 
-    private static String userName;
-    private static String repoName;
-
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                 int appWidgetId) {
+
+        // read shared preferences
+        SharedPreferences pref = context.getSharedPreferences("IssueCreator", Context.MODE_PRIVATE);
+        String userName = pref.getString("user", "");
+        String repoName = pref.getString("repo", "");
+
 
         Intent intent_button = new Intent(context, AppWidget.class);
         intent_button.setAction(ACTION_BUTTON);
@@ -50,11 +56,6 @@ public class AppWidget extends AppWidgetProvider {
         views.setOnClickPendingIntent(R.id.appwidget_button, pendingIntent_button);
         views.setOnClickPendingIntent(R.id.appwidget_user, pendingIntent_user);
         views.setOnClickPendingIntent(R.id.appwidget_repo, pendingIntent_repo);
-
-
-        // read shared preferences
-        userName = context.getSharedPreferences("IssueCreator", Context.MODE_PRIVATE).getString("user", "user");
-        repoName = context.getSharedPreferences("IssueCreator", Context.MODE_PRIVATE).getString("repo", "repo");
 
         // setTextViewText
         views.setTextViewText(R.id.appwidget_user, userName);
@@ -88,10 +89,16 @@ public class AppWidget extends AppWidgetProvider {
         super.onReceive(context, intent);
 
         // read shared preferences
-        userName = context.getSharedPreferences("IssueCreator", Context.MODE_PRIVATE).getString("user", "user");
-        repoName = context.getSharedPreferences("IssueCreator", Context.MODE_PRIVATE).getString("repo", "repo");
+        SharedPreferences prefs = context.getSharedPreferences("IssueCreator", Context.MODE_PRIVATE);
+        String userName = prefs.getString("user", "");
+        String repoName = prefs.getString("repo", "");
 
-        if (Objects.equals(intent.getAction(), ACTION_BUTTON)) {
+        // open MainActivity if userName or repoName is empty
+        if (userName.isEmpty() || repoName.isEmpty()) {
+            Intent mainActivityIntent = new Intent(context, MainActivity.class);
+            mainActivityIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(mainActivityIntent);
+        } else if (Objects.equals(intent.getAction(), ACTION_BUTTON)) {
             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(GITHUB_URL + userName + "/" + repoName + "/issues/new"));
             PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, browserIntent, PendingIntent.FLAG_IMMUTABLE);
             try {
