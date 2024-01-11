@@ -25,6 +25,11 @@ public class AppWidget extends AppWidgetProvider {
     public static final String ACTION_REPO = "com.sakuram.issuecreator.ACTION_WIDGET_REPO_TAPPED";
     private static final String CHANNEL_ID = "com.sakuram.issuecreator.NOTIFICATION_CHANNEL";
 
+    private static String GITHUB_URL = "https;//github.com/";
+
+    private static String userName;
+    private static String repoName;
+
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                 int appWidgetId) {
 
@@ -46,9 +51,14 @@ public class AppWidget extends AppWidgetProvider {
         views.setOnClickPendingIntent(R.id.appwidget_user, pendingIntent_user);
         views.setOnClickPendingIntent(R.id.appwidget_repo, pendingIntent_repo);
 
+
+        // read shared preferences
+        userName = context.getSharedPreferences("IssueCreator", Context.MODE_PRIVATE).getString("user", "user");
+        repoName = context.getSharedPreferences("IssueCreator", Context.MODE_PRIVATE).getString("repo", "repo");
+
         // setTextViewText
-        views.setTextViewText(R.id.appwidget_user, context.getSharedPreferences("IssueCreator", Context.MODE_PRIVATE).getString("user", "user"));
-        views.setTextViewText(R.id.appwidget_repo, context.getSharedPreferences("IssueCreator", Context.MODE_PRIVATE).getString("repo", "repo"));
+        views.setTextViewText(R.id.appwidget_user, userName);
+        views.setTextViewText(R.id.appwidget_repo, repoName);
 
         // Instruct the widget manager to update the widget
         appWidgetManager.updateAppWidget(appWidgetId, views);
