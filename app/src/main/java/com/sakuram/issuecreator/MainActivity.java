@@ -67,8 +67,8 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             // read user input
-            String user_name = Objects.requireNonNull(((TextInputLayout) findViewById(R.id.user_name)).getEditText()).getText().toString();
-            String repo_name = Objects.requireNonNull(((TextInputLayout) findViewById(R.id.repo_name)).getEditText()).getText().toString();
+            String user_name = getTextInput(R.id.user_name);
+            String repo_name = getTextInput(R.id.repo_name);
 
             checkUsernameExists(user_name);
 
@@ -83,6 +83,10 @@ public class MainActivity extends AppCompatActivity {
             updateWidget();
         }
     };
+
+    private String getTextInput(int id) {
+        return Objects.requireNonNull(((TextInputLayout) findViewById(id)).getEditText()).getText().toString();
+    }
 
     private void showToast(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
