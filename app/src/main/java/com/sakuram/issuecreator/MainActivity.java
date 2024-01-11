@@ -41,8 +41,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         InitializeViews();
-
-        setViews();
     }
 
     // for notification
@@ -75,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
             checkUsernameExists(user_name);
 
             // show Toast
-            Toast.makeText(MainActivity.this, user_name, Toast.LENGTH_SHORT).show();
+            showToast("User: " + user_name + "\nRepo: " + repo_name);
 
             // save user input to shared preferences
             getSharedPreferences("user", MODE_PRIVATE).edit().putString("user", user_name).apply();
@@ -89,6 +87,10 @@ public class MainActivity extends AppCompatActivity {
             sendBroadcast(intent);
         }
     };
+
+    private void showToast(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
 
     private final Executor executor = Executors.newSingleThreadExecutor();
     private final Handler handler = new Handler(Looper.getMainLooper());
