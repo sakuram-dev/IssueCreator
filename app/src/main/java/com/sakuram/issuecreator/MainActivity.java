@@ -76,8 +76,8 @@ public class MainActivity extends AppCompatActivity {
             showToast("User: " + user_name + "\nRepo: " + repo_name);
 
             // save user input to shared preferences
-            getSharedPreferences("user", MODE_PRIVATE).edit().putString("user", user_name).apply();
-            getSharedPreferences("repo", MODE_PRIVATE).edit().putString("repo", repo_name).apply();
+            saveToPreferences("user", user_name);
+            saveToPreferences("repo", repo_name);
 
             // update widget
             Intent intent = new Intent(MainActivity.this, AppWidget.class);
@@ -90,6 +90,10 @@ public class MainActivity extends AppCompatActivity {
 
     private void showToast(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
+    private void saveToPreferences(String key, String value) {
+        getSharedPreferences(key, MODE_PRIVATE).edit().putString(key, value).apply();
     }
 
     private final Executor executor = Executors.newSingleThreadExecutor();
