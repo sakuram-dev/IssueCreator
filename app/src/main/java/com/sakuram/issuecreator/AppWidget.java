@@ -93,12 +93,12 @@ public class AppWidget extends AppWidgetProvider {
             openMainActivity(context);
         } else {
             // Handle each action
-            if (Objects.equals(intent.getAction(), ACTION_BUTTON)) {
-                openBrowser(context, GITHUB_URL + userName + "/" + repoName + "/issues/new");
-            } else if (Objects.equals(intent.getAction(), ACTION_USER)) {
+            if (Objects.equals(intent.getAction(), ACTION_USER)) {
                 openBrowser(context, GITHUB_URL + userName);
             } else if (Objects.equals(intent.getAction(), ACTION_REPO)) {
                 openBrowser(context, GITHUB_URL + userName + "/" + repoName);
+            } else if (Objects.equals(intent.getAction(), ACTION_BUTTON)) {
+                openBrowser(context, GITHUB_URL + userName + "/" + repoName + "/issues/new");
             }
         }
     }
