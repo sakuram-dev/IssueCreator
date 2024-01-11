@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
-        InitializeViews();
+        initializeViews();
     }
 
     // for notification
@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void InitializeViews() {
+    private void initializeViews() {
         usernameInputLayout = findViewById(R.id.user_name);
         repoInputLayout = findViewById(R.id.repo_name);
         submitButton = findViewById(R.id.button);
