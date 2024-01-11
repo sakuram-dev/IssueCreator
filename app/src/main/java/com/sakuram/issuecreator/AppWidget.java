@@ -38,24 +38,12 @@ public class AppWidget extends AppWidgetProvider {
         String userName = pref.getString("user", "");
         String repoName = pref.getString("repo", "");
 
-
-        Intent intent_button = new Intent(context, AppWidget.class);
-        intent_button.setAction(ACTION_BUTTON);
-        PendingIntent pendingIntent_button = PendingIntent.getBroadcast(context, 0, intent_button, PendingIntent.FLAG_IMMUTABLE);
-
-        Intent intent_user = new Intent(context, AppWidget.class);
-        intent_user.setAction(ACTION_USER);
-        PendingIntent pendingIntent_user = PendingIntent.getBroadcast(context, 0, intent_user, PendingIntent.FLAG_IMMUTABLE);
-
-        Intent intent_repo = new Intent(context, AppWidget.class);
-        intent_repo.setAction(ACTION_REPO);
-        PendingIntent pendingIntent_repo = PendingIntent.getBroadcast(context, 0, intent_repo, PendingIntent.FLAG_IMMUTABLE);
-
         // Construct the RemoteViews object
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.app_widget);
-        views.setOnClickPendingIntent(R.id.appwidget_button, pendingIntent_button);
-        views.setOnClickPendingIntent(R.id.appwidget_user, pendingIntent_user);
-        views.setOnClickPendingIntent(R.id.appwidget_repo, pendingIntent_repo);
+        // Set onClickPendingIntent for each actions
+        views.setOnClickPendingIntent(R.id.appwidget_user,getPendingIntent(context, ACTION_USER));
+        views.setOnClickPendingIntent(R.id.appwidget_repo, getPendingIntent(context, ACTION_REPO));
+        views.setOnClickPendingIntent(R.id.appwidget_button, getPendingIntent(context, ACTION_BUTTON));
 
         // setTextViewText
         views.setTextViewText(R.id.appwidget_user, userName);
@@ -63,6 +51,13 @@ public class AppWidget extends AppWidgetProvider {
 
         // Instruct the widget manager to update the widget
         appWidgetManager.updateAppWidget(appWidgetId, views);
+    }
+
+    // Helper method to get PendingIntent
+    private static PendingIntent getPendingIntent(Context context, String action) {
+        Intent intent = new Intent(context, AppWidget.class);
+        intent.setAction(action);
+        return PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
     }
 
     @Override
