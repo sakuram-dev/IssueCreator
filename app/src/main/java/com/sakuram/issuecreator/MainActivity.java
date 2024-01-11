@@ -79,12 +79,8 @@ public class MainActivity extends AppCompatActivity {
             saveToPreferences("user", user_name);
             saveToPreferences("repo", repo_name);
 
-            // update widget
-            Intent intent = new Intent(MainActivity.this, AppWidget.class);
-            intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-            int[] ids = AppWidgetManager.getInstance(getApplication()).getAppWidgetIds(new ComponentName(getApplication(), AppWidget.class));
-            intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
-            sendBroadcast(intent);
+            // Update widget
+            updateWidget();
         }
     };
 
@@ -94,6 +90,14 @@ public class MainActivity extends AppCompatActivity {
 
     private void saveToPreferences(String key, String value) {
         getSharedPreferences(key, MODE_PRIVATE).edit().putString(key, value).apply();
+    }
+
+    private void updateWidget() {
+        Intent intent = new Intent(this, AppWidget.class);
+        intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+        int[] ids = AppWidgetManager.getInstance(getApplication()).getAppWidgetIds(new ComponentName(getApplication(), AppWidget.class));
+        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
+        sendBroadcast(intent);
     }
 
     private final Executor executor = Executors.newSingleThreadExecutor();
