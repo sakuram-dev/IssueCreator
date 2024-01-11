@@ -25,7 +25,7 @@ public class AppWidget extends AppWidgetProvider {
     public static final String ACTION_REPO = "com.sakuram.issuecreator.ACTION_WIDGET_REPO_TAPPED";
     private static final String CHANNEL_ID = "com.sakuram.issuecreator.NOTIFICATION_CHANNEL";
 
-    private static String GITHUB_URL = "https;//github.com/";
+    private static String GITHUB_URL = "https://github.com/";
 
     private static String userName;
     private static String repoName;
@@ -86,8 +86,13 @@ public class AppWidget extends AppWidgetProvider {
     @Override
     public void onReceive(Context context, Intent intent) {
         super.onReceive(context, intent);
+
+        // read shared preferences
+        userName = context.getSharedPreferences("IssueCreator", Context.MODE_PRIVATE).getString("user", "user");
+        repoName = context.getSharedPreferences("IssueCreator", Context.MODE_PRIVATE).getString("repo", "repo");
+
         if (Objects.equals(intent.getAction(), ACTION_BUTTON)) {
-            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/sakuram-dev/IssueCreator/issues/new"));
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(GITHUB_URL + userName + "/" + repoName + "/issues/new"));
             PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, browserIntent, PendingIntent.FLAG_IMMUTABLE);
             try {
                 pendingIntent.send();
@@ -95,7 +100,7 @@ public class AppWidget extends AppWidgetProvider {
                 e.printStackTrace();
             }
         } else if (Objects.equals(intent.getAction(), ACTION_USER)) {
-            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/sakuram-dev"));
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(GITHUB_URL + userName));
             PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, browserIntent, PendingIntent.FLAG_IMMUTABLE);
             try {
                 pendingIntent.send();
@@ -103,7 +108,7 @@ public class AppWidget extends AppWidgetProvider {
                 e.printStackTrace();
             }
         } else if (Objects.equals(intent.getAction(), ACTION_REPO)) {
-            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/sakuram-dev/IssueCreator"));
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(GITHUB_URL + userName + "/" + repoName));
             PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, browserIntent, PendingIntent.FLAG_IMMUTABLE);
             try {
                 pendingIntent.send();
