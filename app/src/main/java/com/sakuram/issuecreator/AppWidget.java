@@ -91,29 +91,14 @@ public class AppWidget extends AppWidgetProvider {
         // open MainActivity if userName or repoName is empty
         if (userName.isEmpty() || repoName.isEmpty()) {
             openMainActivity(context);
-        } else if (Objects.equals(intent.getAction(), ACTION_BUTTON)) {
-            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(GITHUB_URL + userName + "/" + repoName + "/issues/new"));
-            PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, browserIntent, PendingIntent.FLAG_IMMUTABLE);
-            try {
-                pendingIntent.send();
-            } catch (PendingIntent.CanceledException e) {
-                e.printStackTrace();
-            }
-        } else if (Objects.equals(intent.getAction(), ACTION_USER)) {
-            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(GITHUB_URL + userName));
-            PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, browserIntent, PendingIntent.FLAG_IMMUTABLE);
-            try {
-                pendingIntent.send();
-            } catch (PendingIntent.CanceledException e) {
-                e.printStackTrace();
-            }
-        } else if (Objects.equals(intent.getAction(), ACTION_REPO)) {
-            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(GITHUB_URL + userName + "/" + repoName));
-            PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, browserIntent, PendingIntent.FLAG_IMMUTABLE);
-            try {
-                pendingIntent.send();
-            } catch (PendingIntent.CanceledException e) {
-                e.printStackTrace();
+        } else {
+            // Handle each action
+            if (Objects.equals(intent.getAction(), ACTION_BUTTON)) {
+                openBrowser(context, GITHUB_URL + userName + "/" + repoName + "/issues/new");
+            } else if (Objects.equals(intent.getAction(), ACTION_USER)) {
+                openBrowser(context, GITHUB_URL + userName);
+            } else if (Objects.equals(intent.getAction(), ACTION_REPO)) {
+                openBrowser(context, GITHUB_URL + userName + "/" + repoName);
             }
         }
     }
@@ -122,6 +107,12 @@ public class AppWidget extends AppWidgetProvider {
         Intent mainActivityIntent = new Intent(context, MainActivity.class);
         mainActivityIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(mainActivityIntent);
+    }
+
+    private void openBrowser(Context context, String url) {
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+        browserIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(browserIntent);
     }
 
     // show notification
