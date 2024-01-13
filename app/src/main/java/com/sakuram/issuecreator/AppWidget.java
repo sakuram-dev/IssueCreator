@@ -53,9 +53,6 @@ public class AppWidget extends AppWidgetProvider {
         int nightModeFlags = context.getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
         // Choose the appropriate icon based on the current night mode status
         int iconId = (nightModeFlags == Configuration.UI_MODE_NIGHT_YES) ? R.drawable.plus_circle_dark : R.drawable.plus_circle;
-
-        // Construct the RemoteViews object
-        //RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.app_widget);
         // Set the icon
         views.setImageViewResource(R.id.appwidget_button, iconId);
 
