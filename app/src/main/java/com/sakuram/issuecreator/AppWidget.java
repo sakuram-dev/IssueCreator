@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.widget.RemoteViews;
 
@@ -32,7 +33,6 @@ public class AppWidget extends AppWidgetProvider {
 
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                 int appWidgetId) {
-
         // read shared preferences
         SharedPreferences pref = context.getSharedPreferences("IssueCreator", Context.MODE_PRIVATE);
         String userName = pref.getString("user", "");
@@ -48,6 +48,13 @@ public class AppWidget extends AppWidgetProvider {
         // setTextViewText
         views.setTextViewText(R.id.appwidget_user, userName.isEmpty() ? "Set user" : userName);
         views.setTextViewText(R.id.appwidget_repo, repoName.isEmpty() ? "Set repo" : repoName);
+
+        // Get the current night mode status
+        int nightModeFlags = context.getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
+        // Choose the appropriate icon based on the current night mode status
+        int iconId = (nightModeFlags == Configuration.UI_MODE_NIGHT_YES) ? R.drawable.plus_circle_dark : R.drawable.plus_circle;
+        // Set the icon
+        views.setImageViewResource(R.id.appwidget_button, iconId);
 
         // Instruct the widget manager to update the widget
         appWidgetManager.updateAppWidget(appWidgetId, views);
