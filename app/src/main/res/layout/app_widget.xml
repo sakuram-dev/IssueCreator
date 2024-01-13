@@ -32,10 +32,11 @@
         android:gravity="center"
         android:textStyle="bold|italic" />
 
-    <Button
+    <ImageButton
         android:id="@+id/appwidget_button"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_margin="8dp"
-        android:layout_weight="1" />
+        android:layout_weight="1"
+        android:background="@android:color/transparent" />
 </LinearLayout>
