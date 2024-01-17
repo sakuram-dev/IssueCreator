@@ -49,13 +49,6 @@ public class AppWidget extends AppWidgetProvider {
         views.setTextViewText(R.id.appwidget_user, userName.isEmpty() ? "Set user" : userName);
         views.setTextViewText(R.id.appwidget_repo, repoName.isEmpty() ? "Set repo" : repoName);
 
-        // Get the current night mode status
-        int nightModeFlags = context.getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
-        // Choose the appropriate icon based on the current night mode status
-        int iconId = (nightModeFlags == Configuration.UI_MODE_NIGHT_YES) ? R.drawable.plus_circle_dark : R.drawable.plus_circle;
-        // Set the icon
-        views.setImageViewResource(R.id.appwidget_button, iconId);
-
         // Instruct the widget manager to update the widget
         appWidgetManager.updateAppWidget(appWidgetId, views);
     }
