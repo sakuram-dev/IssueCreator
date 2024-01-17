@@ -37,7 +37,8 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_margin="8dp"
-        android:scaleType="fitXY"
+        android:scaleType="fitCenter"
         android:layout_weight="1"
+        android:src="@drawable/plus_circle"
         android:background="@android:color/transparent" />
 </LinearLayout>
