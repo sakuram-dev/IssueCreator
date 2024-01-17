@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Issue Creator</string>
     <string name="appwidget_text">EXAMPLE</string>
-    <string name="app_widget_description">This is an app widget description</string>
+    <string name="app_widget_description">Create Issue with one click!!!</string>
     <string name="app_widget_repo">repo</string>
     <string name="app_widget_user">user</string>
 </resources>
