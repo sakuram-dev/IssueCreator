@@ -118,7 +118,7 @@ public class AppWidget extends AppWidgetProvider {
     // show notification
     private void showNotification(Context context, String message) {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setSmallIcon(R.drawable.add_box_ic_launcher_foreground)
                 .setContentTitle("My Notification")
                 .setContentText("test")
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);
