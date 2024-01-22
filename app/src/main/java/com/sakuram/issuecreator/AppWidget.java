@@ -9,12 +9,17 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.net.Uri;
+import android.os.Bundle;
+import android.util.ArrayMap;
+import android.util.SizeF;
 import android.widget.RemoteViews;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
+import java.util.ArrayList;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -39,7 +44,21 @@ public class AppWidget extends AppWidgetProvider {
         String repoName = pref.getString("repo", "");
 
         // Construct the RemoteViews object
-        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.app_widget);
+        // RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.app_widget);
+
+        // layout for each size if API level is 31 or higher
+        Bundle newOptions = appWidgetManager.getAppWidgetOptions(appWidgetId);
+        int minWidth = newOptions.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH);
+
+        RemoteViews views;
+        if (minWidth < 300) {
+            views = new RemoteViews(context.getPackageName(), R.layout.app_widget_small);
+        } else if (minWidth < 400) {
+            views = new RemoteViews(context.getPackageName(), R.layout.app_widget);
+        } else {
+            views = new RemoteViews(context.getPackageName(), R.layout.app_widget_large);
+        }
+
         // Set onClickPendingIntent for each actions
         views.setOnClickPendingIntent(R.id.appwidget_user,getPendingIntent(context, ACTION_USER));
         views.setOnClickPendingIntent(R.id.appwidget_repo, getPendingIntent(context, ACTION_REPO));
@@ -138,5 +157,12 @@ public class AppWidget extends AppWidgetProvider {
         } else {
             notificationManager.notify(0, builder.build());
         }
+    }
+
+    @Override
+    public void onAppWidgetOptionsChanged(Context context, AppWidgetManager appWidgetManager,
+                                          int appWidgetId, Bundle newOptions) {
+        //update app widget
+        updateAppWidget(context, appWidgetManager, appWidgetId);
     }
 }
