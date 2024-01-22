@@ -26,6 +26,7 @@ public class AppWidget extends AppWidgetProvider {
     public static final String ACTION_BUTTON = "com.sakuram.issuecreator.ACTION_WIDGET_BUTTON_TAPPED";
     public static final String ACTION_USER = "com.sakuram.issuecreator.ACTION_WIDGET_USER_TAPPED";
     public static final String ACTION_REPO = "com.sakuram.issuecreator.ACTION_WIDGET_REPO_TAPPED";
+    public static final String ACTION_SETTINGS = "com.sakuram.issuecreator.ACTION_WIDGET_SETTINGS_TAPPED";
 
     private static final String CHANNEL_ID = "com.sakuram.issuecreator.NOTIFICATION_CHANNEL";
 
@@ -58,6 +59,7 @@ public class AppWidget extends AppWidgetProvider {
         views.setOnClickPendingIntent(R.id.appwidget_user,getPendingIntent(context, ACTION_USER));
         views.setOnClickPendingIntent(R.id.appwidget_repo, getPendingIntent(context, ACTION_REPO));
         views.setOnClickPendingIntent(R.id.appwidget_button, getPendingIntent(context, ACTION_BUTTON));
+        views.setOnClickPendingIntent(R.id.appwidget_settings, getPendingIntent(context, ACTION_SETTINGS));
 
         // setTextViewText
         views.setTextViewText(R.id.appwidget_user, userName.isEmpty() ? "Set user" : userName);
@@ -113,6 +115,8 @@ public class AppWidget extends AppWidgetProvider {
                 openBrowser(context, GITHUB_URL + userName + "/" + repoName);
             } else if (Objects.equals(intent.getAction(), ACTION_BUTTON)) {
                 openBrowser(context, GITHUB_URL + userName + "/" + repoName + "/issues/new");
+            } else if (Objects.equals(intent.getAction(), ACTION_SETTINGS)) {
+                openMainActivity(context);
             }
         }
     }
