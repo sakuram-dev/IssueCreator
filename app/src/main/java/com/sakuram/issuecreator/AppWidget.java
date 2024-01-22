@@ -7,8 +7,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.content.res.Configuration;
 import android.net.Uri;
+import android.os.Bundle;
 import android.widget.RemoteViews;
 
 import androidx.core.app.ActivityCompat;
@@ -26,6 +26,7 @@ public class AppWidget extends AppWidgetProvider {
     public static final String ACTION_BUTTON = "com.sakuram.issuecreator.ACTION_WIDGET_BUTTON_TAPPED";
     public static final String ACTION_USER = "com.sakuram.issuecreator.ACTION_WIDGET_USER_TAPPED";
     public static final String ACTION_REPO = "com.sakuram.issuecreator.ACTION_WIDGET_REPO_TAPPED";
+    public static final String ACTION_SETTINGS = "com.sakuram.issuecreator.ACTION_WIDGET_SETTINGS_TAPPED";
 
     private static final String CHANNEL_ID = "com.sakuram.issuecreator.NOTIFICATION_CHANNEL";
 
@@ -39,11 +40,26 @@ public class AppWidget extends AppWidgetProvider {
         String repoName = pref.getString("repo", "");
 
         // Construct the RemoteViews object
-        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.app_widget);
+        // RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.app_widget);
+
+        // layout for each size if API level is 31 or higher
+        Bundle newOptions = appWidgetManager.getAppWidgetOptions(appWidgetId);
+        int minWidth = newOptions.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH);
+
+        RemoteViews views;
+        if (minWidth < 300) {
+            views = new RemoteViews(context.getPackageName(), R.layout.app_widget_small);
+        } else if (minWidth < 400) {
+            views = new RemoteViews(context.getPackageName(), R.layout.app_widget);
+        } else {
+            views = new RemoteViews(context.getPackageName(), R.layout.app_widget_large);
+        }
+
         // Set onClickPendingIntent for each actions
         views.setOnClickPendingIntent(R.id.appwidget_user,getPendingIntent(context, ACTION_USER));
         views.setOnClickPendingIntent(R.id.appwidget_repo, getPendingIntent(context, ACTION_REPO));
         views.setOnClickPendingIntent(R.id.appwidget_button, getPendingIntent(context, ACTION_BUTTON));
+        views.setOnClickPendingIntent(R.id.appwidget_settings, getPendingIntent(context, ACTION_SETTINGS));
 
         // setTextViewText
         views.setTextViewText(R.id.appwidget_user, userName.isEmpty() ? "Set user" : userName);
@@ -99,6 +115,8 @@ public class AppWidget extends AppWidgetProvider {
                 openBrowser(context, GITHUB_URL + userName + "/" + repoName);
             } else if (Objects.equals(intent.getAction(), ACTION_BUTTON)) {
                 openBrowser(context, GITHUB_URL + userName + "/" + repoName + "/issues/new");
+            } else if (Objects.equals(intent.getAction(), ACTION_SETTINGS)) {
+                openMainActivity(context);
             }
         }
     }
@@ -138,5 +156,12 @@ public class AppWidget extends AppWidgetProvider {
         } else {
             notificationManager.notify(0, builder.build());
         }
+    }
+
+    @Override
+    public void onAppWidgetOptionsChanged(Context context, AppWidgetManager appWidgetManager,
+                                          int appWidgetId, Bundle newOptions) {
+        //update app widget
+        updateAppWidget(context, appWidgetManager, appWidgetId);
     }
 }

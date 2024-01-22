@@ -1,0 +1,54 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/Widget.IssueCreator.AppWidget.Container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:theme="@style/Theme.IssueCreator.AppWidgetContainer">
+
+    <ImageButton
+        android:id="@+id/appwidget_settings"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_margin="8dp"
+        android:scaleType="fitCenter"
+        android:layout_weight="1"
+        android:src="@drawable/baseline_settings_24"
+        android:background="@android:color/transparent"/>
+
+    <TextView
+        android:id="@+id/appwidget_user"
+        style="@style/Widget.IssueCreator.AppWidget.InnerView"
+        android:background="#00000000"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_margin="8dp"
+        android:layout_weight="5"
+        android:gravity="center"
+        android:text="@string/app_widget_user"
+        android:autoSizeTextType="uniform"
+        android:textStyle="bold|italic" />
+
+    <TextView
+        android:id="@+id/appwidget_repo"
+        style="@style/Widget.IssueCreator.AppWidget.InnerView"
+        android:background="#00000000"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_margin="8dp"
+        android:layout_weight="5"
+        android:gravity="center"
+        android:text="@string/app_widget_repo"
+        android:autoSizeTextType="uniform"
+        android:textStyle="bold|italic" />
+
+    <ImageButton
+        android:id="@+id/appwidget_button"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_margin="8dp"
+        android:scaleType="fitCenter"
+        android:layout_weight="2"
+        android:src="@drawable/baseline_add_box_24"
+        android:background="@android:color/transparent" />
+
+
+</LinearLayout>
