@@ -50,6 +50,9 @@ public class MainActivity extends AppCompatActivity {
 
         initializeViews();
 
+        // hide action bar
+        Objects.requireNonNull(getSupportActionBar()).hide();
+
         MobileAds.initialize(this, new OnInitializationCompleteListener() {
             @Override
             public void onInitializationComplete(InitializationStatus initializationStatus) {
