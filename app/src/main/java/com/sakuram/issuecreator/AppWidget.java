@@ -6,14 +6,9 @@ import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.widget.RemoteViews;
-
-import androidx.core.app.ActivityCompat;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
 
 import java.util.Objects;
 
@@ -131,31 +126,6 @@ public class AppWidget extends AppWidgetProvider {
         Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
         browserIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(browserIntent);
-    }
-
-    // show notification
-    private void showNotification(Context context, String message) {
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
-                .setSmallIcon(R.drawable.add_box)
-                .setContentTitle("My Notification")
-                .setContentText("test")
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
-
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
-        if (ActivityCompat.checkSelfPermission(context, android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            // grant permission for notification
-
-            return;
-        } else {
-            notificationManager.notify(0, builder.build());
-        }
     }
 
     @Override
