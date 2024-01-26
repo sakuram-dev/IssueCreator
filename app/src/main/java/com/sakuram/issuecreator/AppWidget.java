@@ -8,8 +8,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.ArrayMap;
+import android.util.Pair;
+import android.util.SizeF;
 import android.widget.RemoteViews;
 
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -27,41 +31,49 @@ public class AppWidget extends AppWidgetProvider {
 
     private static String GITHUB_URL = "https://github.com/";
 
-    static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
-                                int appWidgetId) {
-        // read shared preferences
+    static void updateAppWidget(Context context, AppWidgetManager appWidgetManager, int appWidgetId) {
+        // Read user and repo from shared preferences
+        Pair<String, String> userAndRepo = getUserAndRepo(context);
+
+        // Create RemoteViews for each size
+        RemoteViews smallViews = createRemoteViews(context, R.layout.app_widget_small, userAndRepo);
+        RemoteViews mediumViews = createRemoteViews(context, R.layout.app_widget, userAndRepo);
+        RemoteViews largeViews = createRemoteViews(context, R.layout.app_widget_large, userAndRepo);
+
+        // Create a map for flexible widget layout
+        Map<SizeF, RemoteViews> viewMapping = createViewMapping(smallViews, mediumViews, largeViews);
+
+        // Create the final RemoteViews object
+        RemoteViews views = new RemoteViews(viewMapping);
+
+        // Update the widget
+        appWidgetManager.updateAppWidget(appWidgetId, views);
+    }
+
+    private static Pair<String, String> getUserAndRepo(Context context) {
         SharedPreferences pref = context.getSharedPreferences("IssueCreator", Context.MODE_PRIVATE);
         String userName = pref.getString("user", "");
         String repoName = pref.getString("repo", "");
+        return new Pair<>(userName, repoName);
+    }
 
-        // Construct the RemoteViews object
-        // RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.app_widget);
-
-        // layout for each size if API level is 31 or higher
-        Bundle newOptions = appWidgetManager.getAppWidgetOptions(appWidgetId);
-        int minWidth = newOptions.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH);
-
-        RemoteViews views;
-        if (minWidth < 300) {
-            views = new RemoteViews(context.getPackageName(), R.layout.app_widget_small);
-        } else if (minWidth < 400) {
-            views = new RemoteViews(context.getPackageName(), R.layout.app_widget);
-        } else {
-            views = new RemoteViews(context.getPackageName(), R.layout.app_widget_large);
-        }
-
-        // Set onClickPendingIntent for each actions
-        views.setOnClickPendingIntent(R.id.appwidget_user,getPendingIntent(context, ACTION_USER));
+    private static RemoteViews createRemoteViews(Context context, int layoutId, Pair<String, String> userAndRepo) {
+        RemoteViews views = new RemoteViews(context.getPackageName(), layoutId);
+        views.setOnClickPendingIntent(R.id.appwidget_user, getPendingIntent(context, ACTION_USER));
         views.setOnClickPendingIntent(R.id.appwidget_repo, getPendingIntent(context, ACTION_REPO));
         views.setOnClickPendingIntent(R.id.appwidget_button, getPendingIntent(context, ACTION_BUTTON));
         views.setOnClickPendingIntent(R.id.appwidget_settings, getPendingIntent(context, ACTION_SETTINGS));
+        views.setTextViewText(R.id.appwidget_user, userAndRepo.first.isEmpty() ? "Set user" : userAndRepo.first);
+        views.setTextViewText(R.id.appwidget_repo, userAndRepo.second.isEmpty() ? "Set repo" : userAndRepo.second);
+        return views;
+    }
 
-        // setTextViewText
-        views.setTextViewText(R.id.appwidget_user, userName.isEmpty() ? "Set user" : userName);
-        views.setTextViewText(R.id.appwidget_repo, repoName.isEmpty() ? "Set repo" : repoName);
-
-        // Instruct the widget manager to update the widget
-        appWidgetManager.updateAppWidget(appWidgetId, views);
+    private static Map<SizeF, RemoteViews> createViewMapping(RemoteViews smallViews, RemoteViews mediumViews, RemoteViews largeViews) {
+        Map<SizeF, RemoteViews> viewMapping = new ArrayMap<>();
+        viewMapping.put(new SizeF(210f, 70f), smallViews);
+        viewMapping.put(new SizeF(280f, 70f), mediumViews);
+        viewMapping.put(new SizeF(350f, 70f), largeViews);
+        return viewMapping;
     }
 
     // Helper method to get PendingIntent
