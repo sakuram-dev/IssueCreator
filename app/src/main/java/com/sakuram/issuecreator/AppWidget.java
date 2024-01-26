@@ -8,8 +8,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.ArrayMap;
+import android.util.SizeF;
 import android.widget.RemoteViews;
 
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -38,27 +41,37 @@ public class AppWidget extends AppWidgetProvider {
         // RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.app_widget);
 
         // layout for each size if API level is 31 or higher
-        Bundle newOptions = appWidgetManager.getAppWidgetOptions(appWidgetId);
-        int minWidth = newOptions.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH);
 
         RemoteViews views;
-        if (minWidth < 300) {
-            views = new RemoteViews(context.getPackageName(), R.layout.app_widget_small);
-        } else if (minWidth < 400) {
-            views = new RemoteViews(context.getPackageName(), R.layout.app_widget);
-        } else {
-            views = new RemoteViews(context.getPackageName(), R.layout.app_widget_large);
-        }
+        RemoteViews smallViews = new RemoteViews(context.getPackageName(), R.layout.app_widget_small);
+        RemoteViews mediumViews = new RemoteViews(context.getPackageName(), R.layout.app_widget);
+        RemoteViews largeViews = new RemoteViews(context.getPackageName(), R.layout.app_widget_large);
 
-        // Set onClickPendingIntent for each actions
-        views.setOnClickPendingIntent(R.id.appwidget_user,getPendingIntent(context, ACTION_USER));
-        views.setOnClickPendingIntent(R.id.appwidget_repo, getPendingIntent(context, ACTION_REPO));
-        views.setOnClickPendingIntent(R.id.appwidget_button, getPendingIntent(context, ACTION_BUTTON));
-        views.setOnClickPendingIntent(R.id.appwidget_settings, getPendingIntent(context, ACTION_SETTINGS));
+        // Set onClickPendingIntent and TextViewText for each layout
+        smallViews.setOnClickPendingIntent(R.id.appwidget_user,getPendingIntent(context, ACTION_REPO));
+        smallViews.setOnClickPendingIntent(R.id.appwidget_repo, getPendingIntent(context, ACTION_BUTTON));
+        smallViews.setTextViewText(R.id.appwidget_repo, repoName.isEmpty() ? "Set repo" : repoName);
 
-        // setTextViewText
-        views.setTextViewText(R.id.appwidget_user, userName.isEmpty() ? "Set user" : userName);
-        views.setTextViewText(R.id.appwidget_repo, repoName.isEmpty() ? "Set repo" : repoName);
+        mediumViews.setOnClickPendingIntent(R.id.appwidget_user,getPendingIntent(context, ACTION_USER));
+        mediumViews.setOnClickPendingIntent(R.id.appwidget_repo, getPendingIntent(context, ACTION_REPO));
+        mediumViews.setOnClickPendingIntent(R.id.appwidget_button, getPendingIntent(context, ACTION_BUTTON));
+        mediumViews.setTextViewText(R.id.appwidget_user, userName.isEmpty() ? "Set user" : userName);
+        mediumViews.setTextViewText(R.id.appwidget_repo, repoName.isEmpty() ? "Set repo" : repoName);
+
+        largeViews.setOnClickPendingIntent(R.id.appwidget_user,getPendingIntent(context, ACTION_USER));
+        largeViews.setOnClickPendingIntent(R.id.appwidget_repo, getPendingIntent(context, ACTION_REPO));
+        largeViews.setOnClickPendingIntent(R.id.appwidget_button, getPendingIntent(context, ACTION_BUTTON));
+        largeViews.setOnClickPendingIntent(R.id.appwidget_settings, getPendingIntent(context, ACTION_SETTINGS));
+        largeViews.setTextViewText(R.id.appwidget_user, userName.isEmpty() ? "Set user" : userName);
+        largeViews.setTextViewText(R.id.appwidget_repo, repoName.isEmpty() ? "Set repo" : repoName);
+
+        // switch widget layout flexibly
+        Map<SizeF, RemoteViews> viewMapping = new ArrayMap<>();
+        viewMapping.put(new SizeF(210f, 70f), smallViews);
+        viewMapping.put(new SizeF(280f, 70f), mediumViews);
+        viewMapping.put(new SizeF(350f, 70f), largeViews);
+
+        views = new RemoteViews(viewMapping);
 
         // Instruct the widget manager to update the widget
         appWidgetManager.updateAppWidget(appWidgetId, views);
