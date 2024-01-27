@@ -1,19 +1,26 @@
 package com.sakuram.issuecreator;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Intent;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.View;
+import android.view.ViewTreeObserver;
+import android.view.WindowMetrics;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.LoadAdError;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.io.IOException;
@@ -28,35 +35,97 @@ import okhttp3.Response;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.initialization.InitializationStatus;
 import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
+import com.google.android.gms.ads.interstitial.InterstitialAd;
+import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
 
 public class MainActivity extends AppCompatActivity {
 
-      private TextInputLayout usernameInputLayout;
+    private TextInputLayout usernameInputLayout;
     private TextInputLayout repoInputLayout;
     private Button submitButton;
 
     private AdView mAdView;
+    private FrameLayout adContainerView;
+    private boolean initialLayoutComplete = false;
+    private InterstitialAd mInterstitialAd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_main);
-
         initializeViews();
+        hideActionBar();
+        initializeMobileAds();
+        setupAdView();
+        loadFullScreenAd();
+    }
 
-        // hide action bar
+    private void hideActionBar() {
         Objects.requireNonNull(getSupportActionBar()).hide();
+    }
 
-        MobileAds.initialize(this, new OnInitializationCompleteListener() {
+    private void initializeMobileAds() {
+        MobileAds.initialize(this, initializationStatus -> {});
+    }
+
+    private void setupAdView() {
+        adContainerView = findViewById(R.id.id_container);
+        mAdView = new AdView(this);
+        adContainerView.addView(mAdView);
+        adContainerView.getViewTreeObserver().addOnGlobalLayoutListener(
+                new ViewTreeObserver.OnGlobalLayoutListener() {
+                    @Override
+                    public void onGlobalLayout() {
+                        if (!initialLayoutComplete) {
+                            initialLayoutComplete = true;
+                            loadBanner();
+                        }
+                    }
+                }
+        );
+    }
+
+    private void loadFullScreenAd() {
+        AdRequest fullScreenAdRequest = new AdRequest.Builder().build();
+        InterstitialAd.load(this, getString(R.string.admob_fullscreen_unit_id), fullScreenAdRequest, new InterstitialAdLoadCallback() {
             @Override
-            public void onInitializationComplete(InitializationStatus initializationStatus) {
+            public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
+                mInterstitialAd = interstitialAd;
+            }
+
+            @Override
+            public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
+                mInterstitialAd = null;
             }
         });
+    }
 
-        mAdView = findViewById(R.id.adView);
+    private void loadBanner() {
+        mAdView.setAdUnitId(getString(R.string.admob_unit_id));
+        mAdView.setAdSize(getAdSize());
         AdRequest adRequest = new AdRequest.Builder().build();
         mAdView.loadAd(adRequest);
+    }
+
+    private AdSize getAdSize() {
+        float adWidthPixels = getAdWidthPixels();
+        int adWidth = convertPixelsToDp(adWidthPixels);
+        return AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(this, adWidth);
+    }
+
+    private float getAdWidthPixels() {
+        float adWidthPixels = adContainerView.getWidth();
+        if (adWidthPixels == 0f) {
+            WindowMetrics windowMetrics = getWindowManager().getCurrentWindowMetrics();
+            Rect bounds = windowMetrics.getBounds();
+            adWidthPixels = bounds.width();
+        }
+        return adWidthPixels;
+    }
+
+    private int convertPixelsToDp(float pixels) {
+        float density = getResources().getDisplayMetrics().density;
+        return (int) (pixels / density);
     }
 
     private void initializeViews() {
@@ -150,6 +219,11 @@ public class MainActivity extends AppCompatActivity {
 
                         // Update widget
                         updateWidget();
+
+                        // show full screen ad
+                        if (mInterstitialAd != null) {
+                            mInterstitialAd.show(MainActivity.this);
+                        }
                     }
                 });
             } catch (IOException e) {
