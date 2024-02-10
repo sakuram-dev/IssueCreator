@@ -55,8 +55,19 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         initializeViews();
         hideActionBar();
-        initializeMobileAds();
-        setupAdView();
+
+        // Initialize the Mobile Ads SDK
+        MobileAds.initialize(this, new OnInitializationCompleteListener() {
+            @Override
+            public void onInitializationComplete(InitializationStatus initializationStatus) {
+            }
+        });
+
+        // Load banner ad
+        mAdView = findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
+
         loadFullScreenAd();
     }
 
@@ -64,68 +75,24 @@ public class MainActivity extends AppCompatActivity {
         Objects.requireNonNull(getSupportActionBar()).hide();
     }
 
-    private void initializeMobileAds() {
-        MobileAds.initialize(this, initializationStatus -> {});
-    }
-
-    private void setupAdView() {
-        adContainerView = findViewById(R.id.id_container);
-        mAdView = new AdView(this);
-        adContainerView.addView(mAdView);
-        adContainerView.getViewTreeObserver().addOnGlobalLayoutListener(
-                new ViewTreeObserver.OnGlobalLayoutListener() {
-                    @Override
-                    public void onGlobalLayout() {
-                        if (!initialLayoutComplete) {
-                            initialLayoutComplete = true;
-                            loadBanner();
-                        }
-                    }
-                }
-        );
-    }
-
     private void loadFullScreenAd() {
         AdRequest fullScreenAdRequest = new AdRequest.Builder().build();
-        InterstitialAd.load(this, getString(R.string.admob_fullscreen_unit_id), fullScreenAdRequest, new InterstitialAdLoadCallback() {
-            @Override
-            public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
-                mInterstitialAd = interstitialAd;
-            }
 
-            @Override
-            public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
-                mInterstitialAd = null;
-            }
-        });
-    }
+        InterstitialAd.load(this,getString(R.string.admob_fullscreen_unit_id), fullScreenAdRequest,
+                new InterstitialAdLoadCallback() {
+                    @Override
+                    public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
+                        // The mInterstitialAd reference will be null until
+                        // an ad is loaded.
+                        mInterstitialAd = interstitialAd;
+                    }
 
-    private void loadBanner() {
-        mAdView.setAdUnitId(getString(R.string.admob_unit_id));
-        mAdView.setAdSize(getAdSize());
-        AdRequest adRequest = new AdRequest.Builder().build();
-        mAdView.loadAd(adRequest);
-    }
-
-    private AdSize getAdSize() {
-        float adWidthPixels = getAdWidthPixels();
-        int adWidth = convertPixelsToDp(adWidthPixels);
-        return AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(this, adWidth);
-    }
-
-    private float getAdWidthPixels() {
-        float adWidthPixels = adContainerView.getWidth();
-        if (adWidthPixels == 0f) {
-            WindowMetrics windowMetrics = getWindowManager().getCurrentWindowMetrics();
-            Rect bounds = windowMetrics.getBounds();
-            adWidthPixels = bounds.width();
-        }
-        return adWidthPixels;
-    }
-
-    private int convertPixelsToDp(float pixels) {
-        float density = getResources().getDisplayMetrics().density;
-        return (int) (pixels / density);
+                    @Override
+                    public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
+                        // Handle the error
+                        mInterstitialAd = null;
+                    }
+                });
     }
 
     private void initializeViews() {
